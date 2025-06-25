@@ -48,7 +48,7 @@ export function PodiumMember({ driver, position, isActive, onHover }: PodiumMemb
                 }`}
             onMouseEnter={onHover}
         >
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between font-f1-regular">
                 <div className="flex items-center gap-4 flex-1">
                     <motion.div
                         className={`w-2 h-16 ${teamColorClass} rounded-full`}

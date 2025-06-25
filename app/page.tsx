@@ -1,8 +1,9 @@
-import Hero from "@/components/hero";
+import Hero from "@/components/section/hero";
 import SectionContainer from "@/components/common/section-container";
 import f1Data from "@/db/f1.json";
 import { type F1Info } from "@/types/f1";
-import Schedule from "@/components/schedule";
+import Schedule from "@/components/section/schedule";
+import Result from "@/components/section/result";
 export default function Home() {
   return (
     <main
@@ -18,6 +19,12 @@ export default function Home() {
         className='flex items-center justify-center pb-20'
       >
         <Schedule circuits={(f1Data as F1Info).circuits} />
+      </SectionContainer>
+      <SectionContainer
+        id='results'
+        className='flex items-center justify-center pb-20'
+      >
+        <Result teams={(f1Data as F1Info).teams} />
       </SectionContainer>
     </main>
   );

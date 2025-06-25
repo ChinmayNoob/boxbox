@@ -43,7 +43,7 @@ const CircuitContainer = ({ circuits }: CircuitContainerProps) => {
                         </div>
                         <div className='h-[2px] w-full bg-gradient-to-r from-transparent via-neutral-100/60 to-transparent'></div>
 
-                        <h3 className='font-bold text-2xl'>{circuit.name}</h3>
+                        <h3 className='font-bold font-f1-regular text-xl'>{circuit.name}</h3>
 
                         <div className='h-[2px] w-full bg-gradient-to-r from-transparent via-neutral-100/60 to-transparent'></div>
 

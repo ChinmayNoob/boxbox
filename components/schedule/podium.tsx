@@ -31,7 +31,7 @@ const Podium = ({ podium }: podiumProps) => {
         <>
             {podium.length > 0 && (
                 <div className='flex flex-col items-center justify-center gap-y-10 w-full'>
-                    <h3 className='text-xl md:text-2xl lg:text-3xl font-extrabold text-neutral-200'>
+                    <h3 className='text-xl font-f1-bold md:text-2xl lg:text-3xl font-extrabold text-neutral-200'>
                         GP Podium Position
                     </h3>
 

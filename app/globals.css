@@ -11,6 +11,9 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-onest: var(--font-onest);
+  --font-f1-bold: var(--font-f1-bold);
+  --font-f1-regular: var(--font-f1-regular);
+  --font-f1-wide: var(--font-f1-wide);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -20,7 +23,7 @@
   }
 }
 
-html{
+html {
   scroll-behavior: smooth;
 }
 
@@ -54,4 +57,20 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes slideUpChassis {
+  0% {
+    transform: translateY(200px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(10rem);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up-chassis {
+  animation: slideUpChassis 1.2s ease-out forwards;
 }
