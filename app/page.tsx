@@ -4,6 +4,8 @@ import f1Data from "@/db/f1.json";
 import { type F1Info } from "@/types/f1";
 import Schedule from "@/components/section/schedule";
 import Result from "@/components/section/result";
+import Team from "@/components/section/team";
+import Driver from "@/components/section/driver";
 export default function Home() {
   return (
     <main
@@ -25,6 +27,18 @@ export default function Home() {
         className='flex items-center justify-center pb-20'
       >
         <Result teams={(f1Data as F1Info).teams} />
+      </SectionContainer>
+      <SectionContainer
+        id='results'
+        className='flex items-center justify-center pb-20'
+      >
+        <Team teams={(f1Data as F1Info).teams} />
+      </SectionContainer>
+      <SectionContainer
+        id='results'
+        className='flex items-center justify-center pb-20'
+      >
+        <Driver teams={(f1Data as F1Info).teams} />
       </SectionContainer>
     </main>
   );
