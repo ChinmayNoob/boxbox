@@ -11,7 +11,18 @@ type TeamsProps = {
 }
 
 const TeamsContainer = ({ teams }: TeamsProps) => {
-    const [previewTeam, setPreviewTeam] = useState<Team>(teams[0])
+    // Create a stable copy of teams sorted by points (high to low) to prevent reordering
+    const stableTeams = [...teams].sort((a, b) => b.currentPointsWC - a.currentPointsWC)
+
+    const [previewTeam, setPreviewTeam] = useState<Team>(stableTeams[0])
+    const [animationTrigger, setAnimationTrigger] = useState(0)
+
+    const handleTeamHover = (team: Team) => {
+        if (team.id !== previewTeam.id) {
+            setPreviewTeam(team)
+            setAnimationTrigger(prev => prev + 1)
+        }
+    }
 
     const bgCardChassisColor = [
         'bg-gradient-to-l from-[#01a0e8] via-[#01a0e8]/20 to-transparent',
@@ -46,7 +57,7 @@ const TeamsContainer = ({ teams }: TeamsProps) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
         >
-            {teams.slice(0, 5).map((team, index) => (
+            {stableTeams.slice(0, 5).map((team, index) => (
                 <motion.div
                     key={team.id}
                     initial={{ opacity: 0, scale: 0.8, y: 20 }}
@@ -65,7 +76,7 @@ const TeamsContainer = ({ teams }: TeamsProps) => {
                         <TeamLogoCard
                             team={team}
                             index={team.id - 1}
-                            onHover={() => setPreviewTeam(team)}
+                            onHover={() => handleTeamHover(team)}
                         />
                     </ShinyWrapper>
                 </motion.div>
@@ -78,7 +89,7 @@ const TeamsContainer = ({ teams }: TeamsProps) => {
                 transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
             >
                 <motion.div
-                    key={previewTeam.id}
+                    key={animationTrigger}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.4, ease: "easeOut" }}
@@ -143,7 +154,7 @@ const TeamsContainer = ({ teams }: TeamsProps) => {
                 </motion.div>
             </motion.div>
 
-            {teams.slice(5).map((team, index) => (
+            {stableTeams.slice(5).map((team, index) => (
                 <motion.div
                     key={team.id}
                     initial={{ opacity: 0, scale: 0.8, y: 20 }}
@@ -162,7 +173,7 @@ const TeamsContainer = ({ teams }: TeamsProps) => {
                         <TeamLogoCard
                             team={team}
                             index={team.id - 1}
-                            onHover={() => setPreviewTeam(team)}
+                            onHover={() => handleTeamHover(team)}
                         />
                     </ShinyWrapper>
                 </motion.div>
