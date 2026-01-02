@@ -6,12 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "add-podium": "node scripts/add-podium.js",
-    "list-drivers": "node scripts/list-drivers.js",
-    "list-circuits": "node scripts/list-circuits.js",
-    "reset-circuits": "node scripts/reset-circuits.js",
-    "reset-points": "node scripts/reset-points.js"
+    "lint": "next lint"
   },
   "dependencies": {
     "lucide-react": "^0.523.0",
