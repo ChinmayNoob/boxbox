@@ -67,6 +67,12 @@ export default function Header({
                 >
                     Drivers
                 </Link>
+                <Link
+                    href="/dashboard"
+                    className="flex items-center justify-center transition duration-500 hover:text-[#f41d00] hover:scale-110"
+                >
+                    Dashboard
+                </Link>
             </nav>
 
             {/* Mobile Navigation */}
@@ -131,6 +137,13 @@ export default function Header({
                         className="text-lg font-medium transition duration-300 hover:text-[#f41d00] py-2"
                     >
                         Drivers
+                    </Link>
+                    <Link
+                        href="/dashboard"
+                        onClick={closeMenu}
+                        className="text-lg font-medium transition duration-300 hover:text-[#f41d00] py-2"
+                    >
+                        Dashboard
                     </Link>
                 </nav>
             </div>

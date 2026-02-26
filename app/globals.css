@@ -90,3 +90,26 @@ body {
 .animate-pulse-fade-in {
   animation: pulse-fade-in 0.5s ease-out forwards;
 }
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(244, 29, 0, 0.25);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(244, 29, 0, 0.45);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(244, 29, 0, 0.25) transparent;
+}
