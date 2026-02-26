@@ -28,18 +28,26 @@ export default function Header({
         setIsMenuOpen(false)
     }
 
+    const toHomeAnchor = (anchor?: string) => {
+        if (!anchor) return '/'
+        if (anchor.startsWith('#')) {
+            return `/${anchor}`
+        }
+        return anchor
+    }
+
     return (
         <header className="fixed top-0 left-1/2 font-f1-regular -translate-x-1/2 z-50 w-full max-w-6xl mx-auto shadow-xl backdrop-blur-md text-gray-200">
             {/* Desktop Navigation */}
             <nav className="hidden sm:flex flex-row items-center justify-center text-base md:text-lg font-medium mx-auto mt-2 py-0 px-6 gap-x-6">
                 <Link
-                    href={firstAnchorRef || "#"}
+                    href={toHomeAnchor(firstAnchorRef)}
                     className="flex items-center justify-center transition duration-500 hover:text-[#f41d00] hover:scale-110"
                 >
                     Calender
                 </Link>
                 <Link
-                    href={secondAnchorRef || "#"}
+                    href={toHomeAnchor(secondAnchorRef)}
                     className="flex items-center justify-center transition duration-500 hover:text-[#f41d00] hover:scale-110"
                 >
                     Results
@@ -56,13 +64,13 @@ export default function Header({
                     </Link>
                 </div>
                 <Link
-                    href={thirdAnchorRef || "#"}
+                    href={toHomeAnchor(thirdAnchorRef)}
                     className="flex items-center justify-center transition duration-500 hover:text-[#f41d00] hover:scale-110"
                 >
                     Teams
                 </Link>
                 <Link
-                    href={fourAnchorRef || "#"}
+                    href={toHomeAnchor(fourAnchorRef)}
                     className="flex items-center justify-center transition duration-500 hover:text-[#f41d00] hover:scale-110"
                 >
                     Drivers
@@ -111,28 +119,28 @@ export default function Header({
             >
                 <nav className="flex flex-col py-4 px-6 space-y-4">
                     <Link
-                        href={firstAnchorRef || "#"}
+                        href={toHomeAnchor(firstAnchorRef)}
                         onClick={closeMenu}
                         className="text-lg font-medium transition duration-300 hover:text-[#f41d00] py-2"
                     >
                         Calender
                     </Link>
                     <Link
-                        href={secondAnchorRef || "#"}
+                        href={toHomeAnchor(secondAnchorRef)}
                         onClick={closeMenu}
                         className="text-lg font-medium transition duration-300 hover:text-[#f41d00] py-2"
                     >
                         Results
                     </Link>
                     <Link
-                        href={thirdAnchorRef || "#"}
+                        href={toHomeAnchor(thirdAnchorRef)}
                         onClick={closeMenu}
                         className="text-lg font-medium transition duration-300 hover:text-[#f41d00] py-2"
                     >
                         Teams
                     </Link>
                     <Link
-                        href={fourAnchorRef || "#"}
+                        href={toHomeAnchor(fourAnchorRef)}
                         onClick={closeMenu}
                         className="text-lg font-medium transition duration-300 hover:text-[#f41d00] py-2"
                     >

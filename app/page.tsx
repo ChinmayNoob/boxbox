@@ -29,13 +29,13 @@ export default function Home() {
         <Result teams={(f1Data as F1Info).teams} />
       </SectionContainer>
       <SectionContainer
-        id='results'
+        id='teams'
         className='flex items-center justify-center pb-20'
       >
         <Team teams={(f1Data as F1Info).teams} />
       </SectionContainer>
       <SectionContainer
-        id='results'
+        id='drivers'
         className='flex items-center justify-center pb-20'
       >
         <Driver teams={(f1Data as F1Info).teams} />
