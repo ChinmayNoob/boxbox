@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import {
   LineChart,
   Line,
@@ -13,7 +13,7 @@ import {
   Tooltip,
   ReferenceLine,
 } from "recharts";
-import type { DashboardData, OpenF1CarData } from "@/types/api";
+import type { DashboardData, OpenF1CarData, OpenF1TeamRadio } from "@/types/api";
 import Panel from "@/components/dashboard/Panel";
 import SectionHeader from "@/components/dashboard/SectionHeader";
 import ChartTooltip from "@/components/dashboard/ChartTooltip";
@@ -35,6 +35,99 @@ type MergedSample = {
   drsA: number | null;
   drsB: number | null;
 };
+
+type TeamRadioPlayerProps = {
+  url: string;
+  timestamp: string;
+};
+
+function formatTime(seconds: number): string {
+  if (!Number.isFinite(seconds) || seconds <= 0) return "0:00";
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs.toString().padStart(2, "0")}`;
+}
+
+function TeamRadioPlayer({ url, timestamp }: TeamRadioPlayerProps) {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [current, setCurrent] = useState(0);
+  const [duration, setDuration] = useState(0);
+
+  const toggle = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (audio.paused) {
+      void audio.play();
+      setIsPlaying(true);
+    } else {
+      audio.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  const handleTimeUpdate: React.ReactEventHandler<HTMLAudioElement> = (e) => {
+    const el = e.currentTarget;
+    const cur = el.currentTime;
+    const dur = el.duration || duration;
+    setCurrent(cur);
+    if (dur > 0) {
+      setDuration(dur);
+      setProgress((cur / dur) * 100);
+    }
+  };
+
+  const handleLoadedMeta: React.ReactEventHandler<HTMLAudioElement> = (e) => {
+    const dur = e.currentTarget.duration;
+    if (Number.isFinite(dur)) {
+      setDuration(dur);
+    }
+  };
+
+  const handleEnded: React.ReactEventHandler<HTMLAudioElement> = () => {
+    setIsPlaying(false);
+    setProgress(0);
+    setCurrent(0);
+  };
+
+  return (
+    <div className="flex items-center gap-3 w-full">
+      <button
+        type="button"
+        onClick={toggle}
+        className="flex items-center justify-center w-7 h-7 rounded-full bg-[#111827] border border-neutral-700 text-[11px] text-neutral-100 hover:bg-[#f41d00]/20 hover:border-[#f41d00]/60 transition-colors"
+        aria-label={isPlaying ? "Pause team radio" : "Play team radio"}
+      >
+        {isPlaying ? "II" : "▶"}
+      </button>
+      <div className="flex-1 flex flex-col gap-1 min-w-0">
+        <div className="flex items-center gap-2 text-[10px] text-neutral-400 font-mono">
+          <span className="px-1.5 py-0.5 rounded bg-neutral-900/80 border border-neutral-800">
+            {timestamp}
+          </span>
+          <span className="ml-auto">
+            {formatTime(current)} / {formatTime(duration)}
+          </span>
+        </div>
+        <div className="h-1.5 w-full rounded-full bg-neutral-800 overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-[#f41d00] to-[#fb923c]"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      </div>
+      <audio
+        ref={audioRef}
+        src={url}
+        onTimeUpdate={handleTimeUpdate}
+        onLoadedMetadata={handleLoadedMeta}
+        onEnded={handleEnded}
+        className="hidden"
+      />
+    </div>
+  );
+}
 
 function filterLapData(
   allData: OpenF1CarData[],
@@ -89,6 +182,9 @@ export default function TelemetryTab({ data }: { data: DashboardData }) {
   const [carDataA, setCarDataA] = useState<OpenF1CarData[]>([]);
   const [carDataB, setCarDataB] = useState<OpenF1CarData[]>([]);
   const [loading, setLoading] = useState(false);
+  const [radioClips, setRadioClips] = useState<OpenF1TeamRadio[]>([]);
+  const [radioLoading, setRadioLoading] = useState(false);
+  const [radioDriver, setRadioDriver] = useState<"A" | "B">("A");
 
   const pair = teamPairs[selectedTeamIdx];
   const driverA = pair?.drivers[0];
@@ -153,6 +249,29 @@ export default function TelemetryTab({ data }: { data: DashboardData }) {
   useEffect(() => {
     fetchCarData();
   }, [fetchCarData]);
+
+  const fetchTeamRadio = useCallback(async () => {
+    const driverNumber = radioDriver === "A" ? numA : numB;
+    if (!sessionKey || !driverNumber) {
+      setRadioClips([]);
+      return;
+    }
+    setRadioLoading(true);
+    try {
+      const url = `${OPENF1_BASE}/team_radio?session_key=${sessionKey}&driver_number=${driverNumber}`;
+      const res = await fetch(url);
+      const json = (await res.json()) as unknown;
+      setRadioClips(Array.isArray(json) ? (json as OpenF1TeamRadio[]) : []);
+    } catch {
+      setRadioClips([]);
+    } finally {
+      setRadioLoading(false);
+    }
+  }, [sessionKey, numA, numB, radioDriver]);
+
+  useEffect(() => {
+    fetchTeamRadio();
+  }, [fetchTeamRadio]);
 
   const merged = useMemo(() => {
     if (carDataA.length === 0 && carDataB.length === 0) return [];
@@ -350,6 +469,46 @@ export default function TelemetryTab({ data }: { data: DashboardData }) {
                 </AreaChart>
               </ResponsiveContainer>
             </div>
+          </Panel>
+
+          {/* Team Radio */}
+          <Panel>
+            <SectionHeader title="Team Radio" subtitle="Latest messages for selected driver">
+              <div className="flex items-center gap-2 text-[11px] text-neutral-400">
+                <span>Driver</span>
+                <select
+                  value={radioDriver}
+                  onChange={(e) => setRadioDriver(e.target.value === "B" ? "B" : "A")}
+                  className="rounded border border-neutral-800 bg-neutral-900/80 px-2 py-1 text-neutral-200 text-[11px] outline-none"
+                >
+                  <option value="A">{nameA}</option>
+                  <option value="B">{nameB}</option>
+                </select>
+              </div>
+            </SectionHeader>
+            {radioLoading ? (
+              <p className="text-xs text-neutral-500 animate-pulse">Loading team radio…</p>
+            ) : radioClips.length === 0 ? (
+              <p className="text-xs text-neutral-600">No team radio clips for this driver/session.</p>
+            ) : (
+              <ul className="space-y-2 max-h-40 overflow-y-auto pr-1">
+                {radioClips.slice(0, 10).map((clip) => (
+                  <li
+                    key={clip.recording_url}
+                    className="rounded border border-neutral-800 bg-neutral-900/60 px-2 py-1.5"
+                  >
+                    <TeamRadioPlayer
+                      url={clip.recording_url}
+                      timestamp={new Date(clip.date).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                      })}
+                    />
+                  </li>
+                ))}
+              </ul>
+            )}
           </Panel>
         </>
       )}

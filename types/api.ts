@@ -215,6 +215,14 @@ export interface OpenF1Interval {
   gap_to_leader: number | null;
 }
 
+export interface OpenF1TeamRadio {
+  date: string;
+  driver_number: number;
+  meeting_key: number;
+  recording_url: string;
+  session_key: number;
+}
+
 // ── Dashboard View-Model Types ──────────────────────────────────────
 
 export interface DriverStandingRow {

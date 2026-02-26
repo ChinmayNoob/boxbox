@@ -6,6 +6,7 @@ import type {
   OpenF1Position,
   OpenF1Session,
   OpenF1Stint,
+  OpenF1TeamRadio,
   OpenF1Weather,
   SeasonValue,
 } from "@/types/api";
@@ -77,6 +78,16 @@ export async function getCarData(
   driverNumber: number,
 ): Promise<OpenF1CarData[]> {
   return fetchOpenF1<OpenF1CarData>("car_data", {
+    session_key: sessionKey,
+    driver_number: driverNumber,
+  });
+}
+
+export async function getTeamRadio(
+  sessionKey: number,
+  driverNumber?: number,
+): Promise<OpenF1TeamRadio[]> {
+  return fetchOpenF1<OpenF1TeamRadio>("team_radio", {
     session_key: sessionKey,
     driver_number: driverNumber,
   });
