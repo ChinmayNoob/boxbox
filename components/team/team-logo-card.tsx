@@ -19,19 +19,20 @@ const TeamLogoCard = ({ team, index, onHover }: TeamProps) => {
         'bg-gradient-to-b from-[#05b29e] via-[#02d3b8] to-[#01ecce] shadow-[#1b766a]',
         'bg-gradient-to-b from-[#062596] via-[#0f31b0] to-[#173cc9] shadow-[#223091]',
         'bg-gradient-to-b from-[#0726a5] via-[#0f33bd] to-[#1538c8] shadow-[#25557c]',
-        'bg-gradient-to-b from-[#0202af] via-[#0505d2] to-[#0305f4] shadow-[#1b3a86]'
+        'bg-gradient-to-b from-[#0202af] via-[#0505d2] to-[#0305f4] shadow-[#1b3a86]',
+        'bg-gradient-to-b from-[#e5e7eb] via-[#f3f4f6] to-[#ffffff] shadow-[#9ca3af]'
     ]
 
     return (
         <Link
             href={`/team/${team.name.replaceAll(' ', '-').toLowerCase()}`}
-            className={`flex items-center justify-center shadow-lg ${colors[index]} border-2 border-[#ecf3f6]/50 hover:border-[#ecf3f6] rounded-md py-10 md:py-20 transition duration-500 ease-in-out hover:scale-105`}
+            className={`flex items-center justify-center shadow-lg ${colors[index]} border-2 border-[#ecf3f6]/50 hover:border-[#ecf3f6] rounded-md py-6 md:py-10 transition duration-500 ease-in-out hover:scale-105`}
             onMouseEnter={onHover}
         >
             <img
                 src={team.logo}
                 alt={team.name}
-                className='h-10 md:h-20 object-contain'
+                className='h-8 md:h-14 object-contain'
             />
         </Link>
     )

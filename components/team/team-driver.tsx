@@ -17,7 +17,8 @@ const TeamDriver = ({ driver }: TeamDriverProps) => {
         'bg-[#2f6f71]/30',
         'bg-[#435364]/30',
         'bg-[#34476c]/30',
-        'bg-[#355f74]/30'
+        'bg-[#355f74]/30',
+        'bg-[#355f74]/30',
     ]
 
     return (

@@ -21,10 +21,12 @@ const TeamRowInfo = ({ id, title, content }: TeamRowInfoProps) => {
         'bg-[#26f4d3]',
         'bg-[#243d97]',
         'bg-[#3671c6]',
-        'bg-[#1969db]'
+        'bg-[#1969db]',
+        'bg-[#e5e7eb]'
     ]
 
     const bgHoverColors = [
+        'hover:bg-zinc-900/50',
         'hover:bg-zinc-900/50',
         'hover:bg-zinc-900/50',
         'hover:bg-zinc-900/50',

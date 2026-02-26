@@ -17,7 +17,8 @@ const MiniDriverCard = ({ driver, teamId, onHover }: MiniDriverCardProps) => {
         'bg-[#46a09b] text-zinc-800',
         'bg-[#2324d1]',
         'bg-[#161960]',
-        'bg-[#0b1b55] text-[#489edb]'
+        'bg-[#0b1b55] text-[#489edb]',
+        'bg-[#b7bbbd] text-zinc-800',
     ]
 
     return (

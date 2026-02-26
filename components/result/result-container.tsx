@@ -29,7 +29,8 @@ const ResultsContainer = ({ teams }: resultsContainerProps) => {
         'bg-[#26f4d3]',
         'bg-[#243d97]',
         'bg-[#3671c6]',
-        'bg-[#1969db]'
+        'bg-[#1969db]',
+        'bg-[#e5e7eb]'
     ]
 
     return (
