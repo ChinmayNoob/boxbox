@@ -1,22 +1,24 @@
-import { type Team } from '@/types/f1'
 import { motion } from 'motion/react'
+import { useQuery } from 'convex/react'
+import { api } from '@/convex/_generated/api'
 import { useState } from 'react'
 
-type resultsContainerProps = {
-    teams: Team[]
-}
-
-const ResultsContainer = ({ teams }: resultsContainerProps) => {
+const ResultsContainer = () => {
     const [hoveredTeam, setHoveredTeam] = useState<number | null>(null)
     const [hoveredDriver, setHoveredDriver] = useState<number | null>(null)
 
-    const sortedTeams = teams.sort(
-        (a, b) => b.currentPointsWC - a.currentPointsWC
-    )
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const convexApi = api as any
+    const sortedTeams = useQuery(convexApi.standings.getTeamsStandings)
+    const sortedDrivers = useQuery(convexApi.standings.getDriversStandings)
 
-    const sortedDrivers = teams
-        .flatMap((team) => team.drivers)
-        .sort((a, b) => b.currentPointsDWC - a.currentPointsDWC)
+    if (!sortedTeams || !sortedDrivers) {
+        return (
+            <div className='w-full max-w-4xl text-center font-f1-regular text-neutral-300 py-12'>
+                Loading live standings...
+            </div>
+        )
+    }
 
 
     const bgColors = [
@@ -44,10 +46,10 @@ const ResultsContainer = ({ teams }: resultsContainerProps) => {
                 <div className='w-full space-y-3'>
                     {sortedTeams.map((team, i) => (
                         <motion.div
-                            key={team.id}
-                            className={`cursor-pointer p-5 rounded-lg transition-all duration-400 hover:bg-zinc-900/50 ${hoveredTeam === team.id ? 'bg-zinc-900' : 'bg-zinc-800/30'
+                            key={team._id}
+                            className={`cursor-pointer p-5 rounded-lg transition-all duration-400 hover:bg-zinc-900/50 ${hoveredTeam === team.legacyId ? 'bg-zinc-900' : 'bg-zinc-800/30'
                                 }`}
-                            onMouseEnter={() => setHoveredTeam(team.id)}
+                            onMouseEnter={() => setHoveredTeam(team.legacyId)}
                             onMouseLeave={() => setHoveredTeam(null)}
                             whileHover={{ scale: 1.02 }}
                             transition={{ type: "spring", bounce: 0.3, duration: 0.4 }}
@@ -55,8 +57,8 @@ const ResultsContainer = ({ teams }: resultsContainerProps) => {
                             <div className="flex items-center justify-between font-f1-regular">
                                 <div className="flex items-center gap-5 flex-1">
                                     <motion.div
-                                        className={`w-2 h-12 ${bgColors[team.id - 1]} rounded-full`}
-                                        animate={{ scaleY: hoveredTeam === team.id ? 1.2 : 1 }}
+                                        className={`w-2 h-12 ${bgColors[team.legacyId - 1]} rounded-full`}
+                                        animate={{ scaleY: hoveredTeam === team.legacyId ? 1.2 : 1 }}
                                         transition={{ type: "spring", bounce: 0.5, duration: 0.6 }}
                                     />
 
@@ -64,21 +66,19 @@ const ResultsContainer = ({ teams }: resultsContainerProps) => {
                                         <div className="flex items-center gap-4 mb-1">
                                             <motion.span
                                                 className="text-2xl font-bold text-yellow-400"
-                                                animate={{ scale: hoveredTeam === team.id ? 1.1 : 1 }}
+                                                animate={{ scale: hoveredTeam === team.legacyId ? 1.1 : 1 }}
                                                 transition={{ type: "spring", bounce: 0.5, duration: 0.6 }}
                                             >
                                                 {i + 1}
                                             </motion.span>
                                             <motion.h3
-                                                className={`font-bold text-lg tracking-wider transition-colors duration-400 ${hoveredTeam === team.id ? 'text-zinc-200' : 'text-zinc-400'
+                                                className={`font-bold text-lg tracking-wider transition-colors duration-400 ${hoveredTeam === team.legacyId ? 'text-zinc-200' : 'text-zinc-400'
                                                     }`}
-                                                animate={{ y: hoveredTeam === team.id ? -2 : 0 }}
+                                                animate={{ y: hoveredTeam === team.legacyId ? -2 : 0 }}
                                                 transition={{ type: "spring", bounce: 0.5, duration: 0.6 }}
                                             >
                                                 <a
-                                                    href={`/team/${team.name
-                                                        .replaceAll(' ', '-')
-                                                        .toLowerCase()}`}
+                                                    href={`/team/${team.slug}`}
                                                     className="hover:underline"
                                                 >
                                                     {team.fullName}
@@ -90,11 +90,11 @@ const ResultsContainer = ({ teams }: resultsContainerProps) => {
 
                                 <motion.div
                                     className="text-right"
-                                    animate={{ scale: hoveredTeam === team.id ? 1.1 : 1 }}
+                                    animate={{ scale: hoveredTeam === team.legacyId ? 1.1 : 1 }}
                                     transition={{ type: "spring", bounce: 0.3, duration: 0.4 }}
                                 >
                                     <span className="text-xl font-bold text-zinc-200">
-                                        {team.currentPointsWC}
+                                        {team.points}
                                     </span>
                                     <span className="text-sm text-zinc-400 ml-1">pts</span>
                                 </motion.div>
@@ -118,8 +118,8 @@ const ResultsContainer = ({ teams }: resultsContainerProps) => {
                 <div className='flex flex-col md:flex-row items-center justify-evenly w-full gap-y-24 md:gap-y-0 md:gap-x-16 pt-8 md:pt-20'>
                     {sortedDrivers.slice(0, 3).map((driver, i) => (
                         <motion.a
-                            key={driver.id}
-                            href={`/driver/${driver.name.replaceAll(' ', '-').toLowerCase()}`}
+                            key={driver._id}
+                            href={`/driver/${driver.slug}`}
                             className={`flex flex-col items-center justify-center w-[180px] sm:w-[200px] lg:w-[230px] h-[100px] group ${i === 0
                                 ? 'order-1 md:order-2 md:scale-105'
                                 : i === 1
@@ -140,7 +140,7 @@ const ResultsContainer = ({ teams }: resultsContainerProps) => {
                             </div>
 
                             <div
-                                className={`w-full ${bgColors[Math.floor((driver.id - 1) / 2)]
+                                className={`w-full ${bgColors[Math.floor((driver.legacyId - 1) / 2)]
                                     } h-[6px] rounded-t-xl`}
                             >
                                 <span className='font-f1-regular text-neutral-100 font-bold text-5xl sm:text-6xl md:text-7xl absolute -translate-y-12 sm:-translate-y-14 md:-translate-y-16 translate-x-2'>
@@ -165,10 +165,10 @@ const ResultsContainer = ({ teams }: resultsContainerProps) => {
                 <div className='w-full space-y-3 mt-12'>
                     {sortedDrivers.map((driver, i) => (
                         <motion.div
-                            key={driver.id}
-                            className={`cursor-pointer p-5 rounded-lg transition-all duration-400 hover:bg-zinc-900/50 ${hoveredDriver === driver.id ? 'bg-zinc-900' : 'bg-zinc-800/30'
+                            key={driver._id}
+                            className={`cursor-pointer p-5 rounded-lg transition-all duration-400 hover:bg-zinc-900/50 ${hoveredDriver === driver.legacyId ? 'bg-zinc-900' : 'bg-zinc-800/30'
                                 }`}
-                            onMouseEnter={() => setHoveredDriver(driver.id)}
+                            onMouseEnter={() => setHoveredDriver(driver.legacyId)}
                             onMouseLeave={() => setHoveredDriver(null)}
                             whileHover={{ scale: 1.02 }}
                             transition={{ type: "spring", bounce: 0.3, duration: 0.4 }}
@@ -176,8 +176,8 @@ const ResultsContainer = ({ teams }: resultsContainerProps) => {
                             <div className="flex items-center justify-between font-f1-regular">
                                 <div className="flex items-center gap-5 flex-1">
                                     <motion.div
-                                        className={`w-2 h-12 ${bgColors[Math.floor((driver.id - 1) / 2)]} rounded-full`}
-                                        animate={{ scaleY: hoveredDriver === driver.id ? 1.2 : 1 }}
+                                        className={`w-2 h-12 ${bgColors[Math.floor((driver.legacyId - 1) / 2)]} rounded-full`}
+                                        animate={{ scaleY: hoveredDriver === driver.legacyId ? 1.2 : 1 }}
                                         transition={{ type: "spring", bounce: 0.5, duration: 0.6 }}
                                     />
 
@@ -185,21 +185,19 @@ const ResultsContainer = ({ teams }: resultsContainerProps) => {
                                         <div className="flex items-center gap-4 mb-1">
                                             <motion.span
                                                 className="text-2xl font-bold text-yellow-400"
-                                                animate={{ scale: hoveredDriver === driver.id ? 1.1 : 1 }}
+                                                animate={{ scale: hoveredDriver === driver.legacyId ? 1.1 : 1 }}
                                                 transition={{ type: "spring", bounce: 0.5, duration: 0.6 }}
                                             >
                                                 {i + 1}
                                             </motion.span>
                                             <motion.h3
-                                                className={`font-bold text-lg tracking-wider transition-colors duration-400 ${hoveredDriver === driver.id ? 'text-zinc-200' : 'text-zinc-400'
+                                                className={`font-bold text-lg tracking-wider transition-colors duration-400 ${hoveredDriver === driver.legacyId ? 'text-zinc-200' : 'text-zinc-400'
                                                     }`}
-                                                animate={{ y: hoveredDriver === driver.id ? -2 : 0 }}
+                                                animate={{ y: hoveredDriver === driver.legacyId ? -2 : 0 }}
                                                 transition={{ type: "spring", bounce: 0.5, duration: 0.6 }}
                                             >
                                                 <a
-                                                    href={`/driver/${driver.name
-                                                        .replaceAll(' ', '-')
-                                                        .toLowerCase()}`}
+                                                    href={`/driver/${driver.slug}`}
                                                     className="hover:underline"
                                                 >
                                                     {driver.fullName}
@@ -209,7 +207,7 @@ const ResultsContainer = ({ teams }: resultsContainerProps) => {
                                                 src={driver.countryFlag}
                                                 alt={driver.country}
                                                 className="h-5 object-contain ml-3 hidden sm:block"
-                                                animate={{ scale: hoveredDriver === driver.id ? 1.1 : 1 }}
+                                                animate={{ scale: hoveredDriver === driver.legacyId ? 1.1 : 1 }}
                                                 transition={{ type: "spring", bounce: 0.3, duration: 0.4 }}
                                             />
                                         </div>
@@ -218,19 +216,17 @@ const ResultsContainer = ({ teams }: resultsContainerProps) => {
                                             className="flex items-center gap-3 text-sm"
                                             initial={{ opacity: 0, height: 0 }}
                                             animate={{
-                                                height: hoveredDriver === driver.id ? 'auto' : 0,
-                                                opacity: hoveredDriver === driver.id ? 1 : 0
+                                                height: hoveredDriver === driver.legacyId ? 'auto' : 0,
+                                                opacity: hoveredDriver === driver.legacyId ? 1 : 0
                                             }}
                                             transition={{ type: "spring", bounce: 0.3, duration: 0.4 }}
                                         >
                                             <p className="text-zinc-400 uppercase tracking-wide">
                                                 <a
-                                                    href={`/team/${driver.team
-                                                        .replaceAll(' ', '-')
-                                                        .toLowerCase()}`}
+                                                    href={`/team/${driver.teamSlug}`}
                                                     className="hover:underline"
                                                 >
-                                                    {driver.team}
+                                                    {driver.teamName}
                                                 </a>
                                             </p>
                                             <span className="text-zinc-500">•</span>
@@ -243,11 +239,11 @@ const ResultsContainer = ({ teams }: resultsContainerProps) => {
 
                                 <motion.div
                                     className="text-right"
-                                    animate={{ scale: hoveredDriver === driver.id ? 1.1 : 1 }}
+                                    animate={{ scale: hoveredDriver === driver.legacyId ? 1.1 : 1 }}
                                     transition={{ type: "spring", bounce: 0.3, duration: 0.4 }}
                                 >
                                     <span className="text-xl font-bold text-zinc-200">
-                                        {driver.currentPointsDWC}
+                                        {driver.points}
                                     </span>
                                     <span className="text-sm text-zinc-400 ml-1">pts</span>
                                 </motion.div>

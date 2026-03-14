@@ -1,13 +1,8 @@
 'use client'
 import ResultsContainer from '@/components/result/result-container'
-import { type Team } from '@/types/f1'
 import SectionContainer from '@/components/common/section-container'
 
-type ResultProps = {
-    teams: Team[]
-}
-
-const Result = ({ teams }: ResultProps) => {
+const Result = () => {
     return (
         <SectionContainer>
             <div className='flex flex-col items-center justify-center gap-y-6'>
@@ -20,7 +15,7 @@ const Result = ({ teams }: ResultProps) => {
                 <div className='h-[2px] w-full bg-gradient-to-r from-transparent via-[#f41d00]/60 to-transparent'>
                 </div>
 
-                <ResultsContainer teams={teams} />
+                <ResultsContainer />
             </div>
         </SectionContainer>
     )

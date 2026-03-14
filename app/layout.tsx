@@ -5,6 +5,7 @@ import localFont from "next/font/local";
 
 import Header from "@/components/common/header";
 import Background from "@/components/common/background";
+import ConvexClientProvider from "@/components/providers/convex-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -51,15 +52,16 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${onest.variable} ${f1Bold.variable} ${f1Regular.variable} ${f1Wide.variable} antialiased relative`}
       >
-        <Background />
-        <Header
-          firstAnchorRef='#schedule'
-          secondAnchorRef='#results'
-          thirdAnchorRef='#teams'
-          fourAnchorRef='#drivers'
-        />
-
-        {children}
+        <ConvexClientProvider>
+          <Background />
+          <Header
+            firstAnchorRef='#schedule'
+            secondAnchorRef='#results'
+            thirdAnchorRef='#teams'
+            fourAnchorRef='#drivers'
+          />
+          {children}
+        </ConvexClientProvider>
       </body>
     </html>
   );

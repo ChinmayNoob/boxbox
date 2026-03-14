@@ -1,8 +1,17 @@
-import { type Circuit } from "@/types/f1"
 import Link from "next/link"
 
+type CircuitCard = {
+    id: number
+    name: string
+    slug: string
+    countryFlag: string
+    circuitLogo: string
+    generalDate: string
+    currentStatus: 'end' | 'onGoing' | 'notStarted'
+}
+
 type CircuitContainerProps = {
-    circuits: Circuit[]
+    circuits: CircuitCard[]
 }
 
 const CircuitContainer = ({ circuits }: CircuitContainerProps) => {
@@ -11,7 +20,7 @@ const CircuitContainer = ({ circuits }: CircuitContainerProps) => {
             {circuits.map((circuit) => (
                 <Link
                     key={circuit.id}
-                    href={`/circuit/${circuit.name.replaceAll(' ', '-').toLowerCase()}`}
+                    href={`/circuit/${circuit.slug}`}
                     style={{
                         boxShadow:
                             circuit.currentStatus === 'onGoing'

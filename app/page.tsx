@@ -20,13 +20,13 @@ export default function Home() {
         id='schedule'
         className='flex items-center justify-center pb-20'
       >
-        <Schedule circuits={(f1Data as F1Info).circuits} />
+        <Schedule />
       </SectionContainer>
       <SectionContainer
         id='results'
         className='flex items-center justify-center pb-20'
       >
-        <Result teams={(f1Data as F1Info).teams} />
+        <Result />
       </SectionContainer>
       <SectionContainer
         id='teams'

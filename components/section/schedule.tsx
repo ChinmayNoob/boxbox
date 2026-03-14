@@ -1,11 +1,21 @@
-import { type Circuit } from "@/types/f1"
+'use client'
+import { useQuery } from "convex/react"
+import { api } from "@/convex/_generated/api"
 import CircuitContainer from "@/components/schedule/circuit-container"
 
-type ScheduleProps = {
-    circuits: Circuit[]
-}
+const Schedule = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const convexApi = api as any
+    const circuits = useQuery(convexApi.standings.getScheduleCircuits)
 
-const Schedule = ({ circuits }: ScheduleProps) => {
+    if (!circuits) {
+        return (
+            <div className='text-neutral-300 font-f1-regular py-10'>
+                Loading race calendar...
+            </div>
+        )
+    }
+
     return (
         <div className='flex flex-col items-center justify-center'>
             <div className='flex flex-col items-center justify-center gap-y-4 p-4'>
